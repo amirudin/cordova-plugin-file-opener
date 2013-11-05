@@ -1,11 +1,4 @@
-/*
- * PhoneGap is available under *either* the terms of the modified BSD license *or* the
- * MIT License (2008). See http://opensource.org/licenses/alphabetical for full text.
- *
- * Copyright (c) 2005-2010, Nitobi Software Inc.
- * Copyright (c) 2010, IBM Corporation
- */
-package com.phonegap.plugins.FileOpener;
+package io.github.pwlin.cordova.plugins.fileopener;
 
 import java.io.File;
 
@@ -15,10 +8,11 @@ import org.json.JSONException;
 import android.content.Intent;
 import android.net.Uri;
 
-import com.phonegap.api.Plugin;
-import com.phonegap.api.PluginResult;
+import org.apache.cordova.CordovaPlugin;
+import org.apache.cordova.CallbackContext;
+import org.apache.cordova.PluginResult;
 
-public class FileOpener extends Plugin {
+public class FileOpener extends CordovaPlugin {
 
     /**
      * Executes the request and returns PluginResult.
@@ -28,7 +22,7 @@ public class FileOpener extends Plugin {
      * @param callbackId    The callback id used when calling back into JavaScript.
      * @return              A PluginResult object with a status and message.
      */
-    public PluginResult execute(String action, JSONArray args, String callbackId) {
+    public boolean execute(String action, JSONArray args, CallbackContext callbackContext) {
     	
     	   	
         PluginResult.Status status = PluginResult.Status.OK;
@@ -41,9 +35,9 @@ public class FileOpener extends Plugin {
                     status = PluginResult.Status.ERROR;
                 }
             }
-            return new PluginResult(status, result);
+            return new PluginResult(status, result) != null;
         } catch (JSONException e) {
-            return new PluginResult(PluginResult.Status.JSON_EXCEPTION);
+            return new PluginResult(PluginResult.Status.JSON_EXCEPTION) != null;
         }
     }
 
@@ -64,8 +58,6 @@ public class FileOpener extends Plugin {
     public void onDestroy() {
     }
 
-    
-    
     //--------------------------------------------------------------------------
     // LOCAL METHODS
     //--------------------------------------------------------------------------
@@ -81,7 +73,8 @@ public class FileOpener extends Plugin {
 	            intent.setDataAndType(path, contentType);
 	            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 	            //intent.setData(Uri.parse(fileName));
-                this.ctx.startActivity(intent);
+                /////////this.ctx.startActivity(intent);
+	            cordova.getActivity().startActivity(intent);
                 return "";
             } catch (android.content.ActivityNotFoundException e) {
                 //System.out.println("FileOpener: Error opening "+fileName+":"+ e.toString());
