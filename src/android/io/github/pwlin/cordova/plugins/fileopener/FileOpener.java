@@ -1,88 +1,115 @@
 package io.github.pwlin.cordova.plugins.fileopener;
 
 import java.io.File;
-
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.content.Intent;
 import android.net.Uri;
-
+//import android.util.Log;
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.PluginResult;
 
 public class FileOpener extends CordovaPlugin {
 
-    /**
-     * Executes the request and returns PluginResult.
-     *
-     * @param action        The action to execute.
-     * @param args          JSONArry of arguments for the plugin.
-     * @param callbackId    The callback id used when calling back into JavaScript.
-     * @return              A PluginResult object with a status and message.
-     */
-    public boolean execute(String action, JSONArray args, CallbackContext callbackContext) {
-    	
-    	   	
-        PluginResult.Status status = PluginResult.Status.OK;
-        String result = "";
+	/**
+	 * Executes the request and returns a boolean.
+	 * 
+	 * @param action
+	 *            The action to execute.
+	 * @param args
+	 *            JSONArry of arguments for the plugin.
+	 * @param callbackContext
+	 *            The callback context used when calling back into JavaScript.
+	 * @return boolean.
+	 */
+	public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
 
-        try {
-            if (action.equals("open")) {
-                result = this.open(args.getString(0), args.getString(1));
-                if (result.length() > 0) {
-                    status = PluginResult.Status.ERROR;
-                }
-            }
-            return new PluginResult(status, result) != null;
-        } catch (JSONException e) {
-            return new PluginResult(PluginResult.Status.JSON_EXCEPTION) != null;
-        }
-    }
+		if (action.equals("open")) {
 
-    /**
-     * Identifies if action to be executed returns a value and should be run synchronously.
-     *
-     * @param action    The action to execute
-     * @return          T=returns value
-     */
-    public boolean isSynch(String action) {
-        return false;
-    }
+			try {
 
-    /**
-     * Called by AccelBroker when listener is to be shut down.
-     * Stop listener.
-     */
-    public void onDestroy() {
-    }
+				return this._open(args.getString(0), args.getString(1), callbackContext);
 
-    //--------------------------------------------------------------------------
-    // LOCAL METHODS
-    //--------------------------------------------------------------------------
+			} catch (JSONException e) {
 
-    public String open(String fileName, String contentType) {
-    	
-    	File file = new File(fileName);
+				JSONObject errorObj = new JSONObject();
+				errorObj.put("status", PluginResult.Status.JSON_EXCEPTION.ordinal());
+				errorObj.put("message", e.getMessage());
+				callbackContext.error(errorObj);
+				return false;
+			}
 
-        if (file.exists()) {
-        	try {
-	        	Uri path = Uri.fromFile(file);
-	            Intent intent = new Intent(Intent.ACTION_VIEW);
-	            intent.setDataAndType(path, contentType);
-	            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-	            //intent.setData(Uri.parse(fileName));
-                /////////this.ctx.startActivity(intent);
-	            cordova.getActivity().startActivity(intent);
-                return "";
-            } catch (android.content.ActivityNotFoundException e) {
-                //System.out.println("FileOpener: Error opening "+fileName+":"+ e.toString());
-                return e.toString();
-            }            
-        } else {
-        	return "file not found";
-        }
-    }
+		} else {
+
+			JSONObject errorObj = new JSONObject();
+			errorObj.put("status", PluginResult.Status.INVALID_ACTION.ordinal());
+			errorObj.put("message", "Invalid action");
+			callbackContext.error(errorObj);
+			return false;
+
+		}
+
+	}
+
+	/**
+	 * Identifies if action to be executed returns a value and should be run
+	 * synchronously.
+	 * 
+	 * @param action
+	 *            The action to execute
+	 * @return T=returns value
+	 */
+	public boolean isSynch(String action) {
+		return false;
+	}
+
+	/**
+	 * Called by AccelBroker when listener is to be shut down. Stop listener.
+	 */
+	public void onDestroy() {
+	}
+
+	private boolean _open(String fileName, String contentType, CallbackContext callbackContext) throws JSONException {
+
+		File file = new File(fileName);
+
+		if (file.exists()) {
+
+			try {
+
+				Uri path = Uri.fromFile(file);
+				Intent intent = new Intent(Intent.ACTION_VIEW);
+				intent.setDataAndType(path, contentType);
+				intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				/*
+				 * @see
+				 * http://stackoverflow.com/questions/14321376/open-an-activity-from-a-cordovaplugin
+				 */
+				cordova.getActivity().startActivity(intent);
+				callbackContext.success();
+				return true;
+
+			} catch (android.content.ActivityNotFoundException e) {
+
+				JSONObject errorObj = new JSONObject();
+				errorObj.put("status", PluginResult.Status.ERROR.ordinal());
+				errorObj.put("message", "Activity not found: " + e.getMessage());
+				callbackContext.error(errorObj);
+				return false;
+			}
+
+		} else {
+
+			JSONObject errorObj = new JSONObject();
+			errorObj.put("status", PluginResult.Status.ERROR.ordinal());
+			errorObj.put("message", "File not found");
+			callbackContext.error(errorObj);
+			return false;
+
+		}
+	}
 
 }
