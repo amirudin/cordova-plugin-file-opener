@@ -85,8 +85,7 @@ public class FileOpener extends CordovaPlugin {
 				intent.setDataAndType(path, contentType);
 				intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 				/*
-				 * @see
-				 * http://stackoverflow.com/questions/14321376/open-an-activity-from-a-cordovaplugin
+				 * @see  http://stackoverflow.com/questions/14321376/open-an-activity-from-a-cordovaplugin
 				 */
 				cordova.getActivity().startActivity(intent);
 				callbackContext.success();
