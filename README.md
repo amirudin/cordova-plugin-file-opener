@@ -4,6 +4,7 @@ This plugin will open a file on your device file system with its default applica
 
 Requirements
 -------------
+Android
 Cordova 3.0 or higher
 
 Installation
