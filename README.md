@@ -16,7 +16,10 @@ Usage
 Open an APK install dialog:
     
     <script>
-      cordova.plugins.fileOpener.open('/sdcard/Download/gmail.apk', 'application/vnd.android.package-archive');
+        cordova.plugins.fileOpener.open(
+            '/sdcard/Download/gmail.apk', 
+            'application/vnd.android.package-archive'
+        );
     </script>
     
 Open a PDF document with the default PDF reader and optional callback object:
