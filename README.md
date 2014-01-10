@@ -16,12 +16,23 @@ Usage
 Open an APK install dialog:
     
     <script>
-      cordova.plugins.fileOpener.open('/sdcard/Downloads/gmail.apk', 'application/vnd.android.package-archive');
+      cordova.plugins.fileOpener.open('/sdcard/Download/gmail.apk', 'application/vnd.android.package-archive');
     </script>
     
-Open a PDF document with the default PDF reader:
+Open a PDF document with the default PDF reader and optional callback object:
 
     <script>
-      cordova.plugins.fileOpener.open('/sdcard/Downloads/starwars.pdf', 'application/pdf');
+        cordova.plugins.fileOpener.open(
+    	    '/sdcard/Download/starwars.pdf', 
+    	    'application/pdf', 
+    	    { 
+    		    error : function(errorObj) { 
+    			    alert('Error status: ' + errorObj.status + ' - Error message: ' + errorObj.message); 
+    		    },
+    		    success : function () {
+    			    alert('file opened successfully'); 				
+    		    }
+    	    }
+        );
     </script>
     
