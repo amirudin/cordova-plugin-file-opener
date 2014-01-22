@@ -39,3 +39,5 @@ Open a PDF document with the default PDF reader and optional callback object:
         );
     </script>
     
+__Please Note that for properly opening a PDF file, you must already have a PDF reader (Adobe Acrobat Reader, Foxit Mobile PDF, etc. ) installed on your mobile device. Otherwise this will not work.__
+
